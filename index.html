@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixels Community | Level Up</title>
+    <style>
+        :root {
+            --neon-orange: #ff8c00;
+            --deep-orange: #e65100;
+            --bg-black: #0a0a0a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-black);
+            color: #ffffff;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Animated Pixel Background */
+        #pixelCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        /* Glassmorphism Card */
+        .content-card {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: 440px;
+            padding: 50px 30px;
+            background: rgba(15, 15, 15, 0.85);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 140, 0, 0.25);
+            border-radius: 30px;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7);
+        }
+
+        /* Logo Image Styling */
+        .logo-wrapper {
+            margin-bottom: 25px;
+        }
+
+        .logo-img {
+            width: 120px; /* Adjust size as needed */
+            height: auto;
+            filter: drop-shadow(0 0 10px rgba(255, 140, 0, 0.3));
+            transition: transform 0.4s ease;
+        }
+
+        .logo-img:hover {
+            transform: scale(1.1) rotate(2deg);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            letter-spacing: 5px;
+            margin-bottom: 20px;
+            font-weight: 900;
+            background: linear-gradient(to bottom, #fff 30%, var(--neon-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .description {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: #cccccc;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        /* Premium Apply Now Button */
+        .apply-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .apply-btn {
+            position: relative;
+            display: inline-block;
+            padding: 22px 60px;
+            background: var(--neon-orange);
+            color: #000;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 1.1rem;
+            border-radius: 15px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 2;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .apply-btn:hover {
+            transform: translateY(-5px);
+            background: #fff;
+            box-shadow: 0 15px 30px rgba(255, 140, 0, 0.4);
+        }
+
+        /* Pulsing Glow Effect */
+        .btn-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--neon-orange);
+            filter: blur(25px);
+            opacity: 0.5;
+            border-radius: 15px;
+            animation: pulse 2.5s infinite;
+            z-index: 1;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 0.5; }
+            50% { transform: scale(1.15); opacity: 0.2; }
+            100% { transform: scale(0.9); opacity: 0.5; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <canvas id="pixelCanvas"></canvas>
+
+    <div class="content-card">
+        <div class="logo-wrapper">
+            <img src="logo.png" alt="Pixels Logo" class="logo-img">
+        </div>
+
+        
+
+        <p class="description">
+            Pixels Community is a creative student community where ideas become real projects. 
+            We bring together designers, marketers, photographers, organizers, and leaders 
+            to build events, leadership, and digital experiences.
+        </p>
+
+        <div class="apply-container">
+            <div class="btn-glow"></div>
+            <a href="https://forms.gle/YKiX4rnj1jFTyVJa9" class="apply-btn">Apply Now</a>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('pixelCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let particles = [];
+        const particleCount = 120;
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+
+        class FallingPixel {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height - canvas.height;
+                this.size = Math.random() * 5 + 2; 
+                this.speed = (this.size / 5) * 2.5 + 0.5;
+                this.opacity = (this.size / 7);
+            }
+
+            update() {
+                this.y += this.speed;
+                if (this.y > canvas.height) this.reset();
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(255, 140, 0, ${this.opacity})`;
+                ctx.fillRect(this.x, this.y, this.size, this.size);
+            }
+        }
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new FallingPixel());
+        }
+
+        function animate() {
+            ctx.fillStyle = 'rgba(10, 10, 10, 0.2)'; 
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
